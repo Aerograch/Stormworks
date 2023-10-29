@@ -44,21 +44,35 @@ end
 
 -- try require("Folder.Filename") to include code from another file in this, so you can store code in libraries
 -- the "LifeBoatAPI" is included by default in /_build/libs/ - you can use require("LifeBoatAPI") to get this, and use all the LifeBoatAPI.<functions>!
-function Button(cords, label, state, statefunc, color, draw, func)
+function Button(cords, type, hitboxCords, label, state, statefunc, color, draw, touchfunc, heldfunc)
+    function generateHitbox()
+        if type == 1 then --rect matching visual
+            return cords
+        end
+        if type == 2 then --circle
+            return 
+            {
+                x = cords.x - cords.rim,
+                y = cords.y - cords.rim,
+                w = cords.rim * 2-1,
+                h = cords.rim * 2-1
+            }
+        end
+    end
     return
     {
-        x = cords[1],
-        y = cords[2],
-        w = cords[3],
-        h = cords[4],
-        label = label,
-        state = state,
+        cords = cords,
+        type = type or 1,
+        hitboxCords = hitboxCords or generateHitbox(),
+        label = label or '',
+        state = state or false,
         statefunc = statefunc or function(me)
             me.state = not me.state
         end,
         color = color or {255, 255, 255},
-        draw = draw,
-        func = func
+        draw = draw or drawButton,
+        touchfunc = touchfunc or null,
+        heldfunc = heldfunc or null
     }
 end
 
@@ -73,39 +87,44 @@ end
 
 function drawTextOnlyButton(btn)
     if btn.state then
-        screen.drawText(btn.x, btn.y, btn.label)
+        screen.setColor(unpackColor(btn.color))
+        screen.drawText(btn.cords.x, btn.cords.y, btn.label)
     end
     
 end
 
 function drawButton(btn)
     if btn.state then
-        screen.setColor(btn.color)
-        screen.drawRectF(btn.x, btn.y, btn.w, btn.h)
+        screen.setColor(unpackColor(btn.color))
+        screen.drawRectF(btn.cords.x, btn.cords.y, btn.cords.w, btn.cords.h)
     end
 end
 
 function drawCircleButton(btn)
     if btn.state then
-        screen.setColor(btn.color)
-        screen.drawCircleF(btn.x, btn.y, btn.w)
+        screen.setColor(unpackColor(btn.color))
+        screen.drawCircleF(btn.cords.x, btn.cords.y, btn.cords.rim)
     end
 end
 
 function drawCircleButtonWithFill(btn)
-    screen.setColor(btn.color[1])
-    screen.drawCircle(btn.x, btn.y, btn.w)
+    screen.setColor(unpackColor(btn.color.rim))
+    screen.drawCircleF(btn.cords.x, btn.cords.y, btn.cords.rim)
     if btn.state then
-        screen.setColor(btn.color[2])
-        screen.drawCircleF(btn.x+1, btn.y+1, btn.w-1)
+        screen.setColor(unpackColor(btn.color.on))
+        screen.drawCircleF(btn.cords.x, btn.cords.y, btn.cords.body)
     else
-        screen.setColor(btn.color[3])
-        screen.drawCircleF(btn.x, btn.y, btn.w-1)
+        screen.setColor(unpackColor(btn.color.off))
+        screen.drawCircleF(btn.cords.x, btn.cords.y, btn.cords.body)
     end
 end
 
+function unpackColor(c)
+    return c[1], c[2], c[3]
+end
+
 function isInbound(btn, x, y)
-    if x >= btn.x and x <= btn.x + btn.w and y >= btn.y and y <= btn.y + btn.h then
+    if x >= btn.hitboxCords.x and x <= btn.hitboxCords.x + btn.hitboxCords.w and y >= btn.hitboxCords.y and y <= btn.hitboxCords.y + btn.hitboxCords.h then
         return true
     end
     return false
@@ -118,25 +137,53 @@ end
 function drawPing(ping)
     x, y = map.mapToScreen(pos.x, pos.y, scale, 96, 96, ping.x, ping.y)
     radius = ping.dist/(1000*scale)*96
+    screen.setColor(255, 255, 0)
     screen.drawCircle(x, y, radius)
 end
 
-buttons = 
+function null()
+
+end
+
+buttons =
 {
     Button(
-        {48, 48, 10, 10},
-        '',
-        false,
-        function (me)
-            me.state = not me.state
-        end,
         {
-            {255, 255, 255},
-            {0, 255, 0},
-            {255, 0, 0}
+            x = 88,
+            y = 48,
+            rim = 5,
+            body = 4
+        },
+        2,
+        nil,
+        nil,
+        false,
+        nil,
+        {
+            rim = {255, 255, 255},
+            on = {0, 255, 0},
+            off = {255, 0, 0}
         },
         drawCircleButtonWithFill,
-        function () end
+        function (me)
+            fetchScaleFromKeyboard = me.state
+        end
+    ),
+
+    Button(
+        {
+            x = 88,
+            y = 36,
+            rim = 5
+        },
+        2,
+        nil,
+        nil,
+        true,
+        null,
+        {255, 255, 255},
+        drawCircleButton,
+        addPing
     )
 }
 
@@ -145,6 +192,7 @@ transponderPings = {}
 btt = 0
 ticks = 0
 
+fetchScaleFromKeyboard = true
 scale = 1
 pos =
 {
@@ -176,10 +224,16 @@ function onTick()
     touch1.held = input.getBool(1)
     touch1.x = input.getNumber(3)
     touch1.y = input.getNumber(4)
+
+    if fetchScaleFromKeyboard == true then
+        scale = input.getNumber(17)
+    end
 end
 
 
 function onDraw()
+    screen.drawMap(pos.x, pos.y, scale)
+
     for i = 1, #buttons do
         buttons[i].draw(buttons[i])
     end
@@ -187,10 +241,21 @@ function onDraw()
     if touch1.touched then
         for i = 1, #buttons do
             if isInbound(buttons[i], touch1.x, touch1.y) then
-                buttons[i].func(buttons[i])
+                buttons[i].touchfunc(buttons[i])
                 buttons[i].statefunc(buttons[i])
             end
         end
+    end
+    if touch1.held then
+        for i = 1, #buttons do
+            if isInbound(buttons[i], touch1.x, touch1.y) then
+                buttons[i].heldfunc(buttons[i])
+            end
+        end
+    end
+
+    for i = 1, #transponderPings do
+        drawPing(transponderPings[i])
     end
 end
 
