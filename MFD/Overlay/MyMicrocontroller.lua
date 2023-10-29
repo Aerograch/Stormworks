@@ -47,7 +47,7 @@ end
 --require("ScreenLib.Button")
 
 function Button(cords, label, state, statefunc, color, draw, func)
-    return 
+    return
     {
         x = cords[1],
         y = cords[2],
@@ -322,10 +322,6 @@ function onDraw()
             end
         end
     end
-
-end
-
-function switchNav()
 
 end
 

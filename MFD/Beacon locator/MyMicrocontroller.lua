@@ -44,20 +44,154 @@ end
 
 -- try require("Folder.Filename") to include code from another file in this, so you can store code in libraries
 -- the "LifeBoatAPI" is included by default in /_build/libs/ - you can use require("LifeBoatAPI") to get this, and use all the LifeBoatAPI.<functions>!
+function Button(cords, label, state, statefunc, color, draw, func)
+    return
+    {
+        x = cords[1],
+        y = cords[2],
+        w = cords[3],
+        h = cords[4],
+        label = label,
+        state = state,
+        statefunc = statefunc or function(me)
+            me.state = not me.state
+        end,
+        color = color or {255, 255, 255},
+        draw = draw,
+        func = func
+    }
+end
+
+function ping(x, y, time)
+    return 
+    {
+        x = x,
+        y = y,
+        dist = time * 50 - 150
+    }
+end
+
+function drawTextOnlyButton(btn)
+    if btn.state then
+        screen.drawText(btn.x, btn.y, btn.label)
+    end
+    
+end
+
+function drawButton(btn)
+    if btn.state then
+        screen.setColor(btn.color)
+        screen.drawRectF(btn.x, btn.y, btn.w, btn.h)
+    end
+end
+
+function drawCircleButton(btn)
+    if btn.state then
+        screen.setColor(btn.color)
+        screen.drawCircleF(btn.x, btn.y, btn.w)
+    end
+end
+
+function drawCircleButtonWithFill(btn)
+    screen.setColor(btn.color[1])
+    screen.drawCircle(btn.x, btn.y, btn.w)
+    if btn.state then
+        screen.setColor(btn.color[2])
+        screen.drawCircleF(btn.x+1, btn.y+1, btn.w-1)
+    else
+        screen.setColor(btn.color[3])
+        screen.drawCircleF(btn.x, btn.y, btn.w-1)
+    end
+end
+
+function isInbound(btn, x, y)
+    if x >= btn.x and x <= btn.x + btn.w and y >= btn.y and y <= btn.y + btn.h then
+        return true
+    end
+    return false
+end
+
+function addPing()
+    transponderPings[#transponderPings + 1] = ping(pos.x, pos.y, btt)
+end
+
+function drawPing(ping)
+    x, y = map.mapToScreen(pos.x, pos.y, scale, 96, 96, ping.x, ping.y)
+    radius = ping.dist/(1000*scale)*96
+    screen.drawCircle(x, y, radius)
+end
+
+buttons = 
+{
+    Button(
+        {48, 48, 10, 10},
+        '',
+        false,
+        function (me)
+            me.state = not me.state
+        end,
+        {
+            {255, 255, 255},
+            {0, 255, 0},
+            {255, 0, 0}
+        },
+        drawCircleButtonWithFill,
+        function () end
+    )
+}
+
+transponderPings = {}
 
 btt = 0
 ticks = 0
+
+scale = 1
+pos =
+{
+    x = 0,
+    y = 0
+}
+
+touch1 = {
+    touched = false,
+    held = false,
+    x = 0,
+    y = 0
+}
+
 function onTick()
+    --btt
     if input.getBool(3) then
         btt = ticks
         ticks = 0
     else
         ticks = ticks + 1
     end
+
+    --inputs
+    pos.x = input.getNumber(15)
+    pos.y = input.getNumber(16)
+
+    touch1.touched = input.getBool(1) and not touch1.held
+    touch1.held = input.getBool(1)
+    touch1.x = input.getNumber(3)
+    touch1.y = input.getNumber(4)
 end
 
+
 function onDraw()
-    screen.drawCircle(16,16,5)
+    for i = 1, #buttons do
+        buttons[i].draw(buttons[i])
+    end
+
+    if touch1.touched then
+        for i = 1, #buttons do
+            if isInbound(buttons[i], touch1.x, touch1.y) then
+                buttons[i].func(buttons[i])
+                buttons[i].statefunc(buttons[i])
+            end
+        end
+    end
 end
 
 
