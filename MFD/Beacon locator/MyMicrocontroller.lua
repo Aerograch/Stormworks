@@ -141,6 +141,10 @@ function drawPing(ping)
     screen.drawCircle(x, y, radius)
 end
 
+function clearPings()
+    transponderPings = {}
+end
+
 function null()
 
 end
@@ -166,7 +170,7 @@ buttons =
         },
         drawCircleButtonWithFill,
         function (me)
-            fetchScaleFromKeyboard = me.state
+            fetchScaleFromKeyboard = not me.state
         end
     ),
 
@@ -184,6 +188,22 @@ buttons =
         {255, 255, 255},
         drawCircleButton,
         addPing
+    ),
+
+    Button(
+        {
+            x = 88,
+            y = 60,
+            rim = 5
+        },
+        2,
+        nil,
+        nil,
+        true,
+        null,
+        {255, 255, 255},
+        drawCircleButton,
+        clearPings
     )
 }
 
@@ -207,7 +227,12 @@ touch1 = {
     y = 0
 }
 
+mode = 0
 function onTick()
+    mode = input.getNumber(32)
+    if mode ~= 0 then
+        return
+    end
     --btt
     if input.getBool(3) then
         btt = ticks
@@ -232,6 +257,9 @@ end
 
 
 function onDraw()
+    if mode ~= 0 then
+        return
+    end
     screen.drawMap(pos.x, pos.y, scale)
 
     for i = 1, #buttons do
@@ -243,13 +271,6 @@ function onDraw()
             if isInbound(buttons[i], touch1.x, touch1.y) then
                 buttons[i].touchfunc(buttons[i])
                 buttons[i].statefunc(buttons[i])
-            end
-        end
-    end
-    if touch1.held then
-        for i = 1, #buttons do
-            if isInbound(buttons[i], touch1.x, touch1.y) then
-                buttons[i].heldfunc(buttons[i])
             end
         end
     end
