@@ -45,20 +45,27 @@ end
 -- try require("Folder.Filename") to include code from another file in this, so you can store code in libraries
 -- the "LifeBoatAPI" is included by default in /_build/libs/ - you can use require("LifeBoatAPI") to get this, and use all the LifeBoatAPI.<functions>!
 
+function nanCheck(a)
+    if a ~= a then
+        return 0
+    end
+    return a
+end
+
 function calculateAngularDeviation(pos, line)
     deviation = {
         tilt = 0,
         compass = 0
     }
     
-    deviation.tilt = pos.tilt - line.tilt
+    deviation.tilt = nanCheck(pos.tilt - line.tilt)
 
     if math.abs(pos.compass) > 0.25 then
 		pos.compass = (pos.compass + 1) % 1 - 0.5
 		line.compass = (line.compass + 1) % 1 - 0.5
     end
 
-    deviation.compass = pos.compass - line.compass
+    deviation.compass = nanCheck(pos.compass - line.compass)
     return deviation
 end
 
@@ -102,8 +109,8 @@ function calculateDeviation(pos, line)
     m22 = cx*cy
 
     deviationRelative = {
-        x = m00*deviationAbsolute.x + m10*deviationAbsolute.y + m20*deviationAbsolute.z,
-        y = m01*deviationAbsolute.x + m11*deviationAbsolute.y + m21*deviationAbsolute.z
+        x = nanCheck(m00*deviationAbsolute.x + m10*deviationAbsolute.y + m20*deviationAbsolute.z),
+        y = nanCheck(m01*deviationAbsolute.x + m11*deviationAbsolute.y + m21*deviationAbsolute.z)
     }
 
     return deviationRelative
@@ -132,6 +139,8 @@ tgtLine = {
 }
 
 function onTick()
+    enable = input.getBool(1)
+
     myPos.x = input.getNumber(1)
     myPos.y = input.getNumber(2)
     myPos.z = input.getNumber(3)
@@ -141,18 +150,29 @@ function onTick()
     myPos.eulerY = input.getNumber(15)
     myPos.eulerZ = input.getNumber(16)
 
-    tgtLine.x0 = input.getNumber()
-    tgtLine.y0 = input.getNumber()
-    tgtLine.z0 = input.getNumber()
-    tgtLine.a = input.getNumber()
-    tgtLine.b = input.getNumber()
-    tgtLine.c = input.getNumber()
-    tgtLine.tilt = input.getNumber()
-    tgtLine.compass = input.getNumber()
+    tgtLine.x0 = input.getNumber(6)
+    tgtLine.y0 = input.getNumber(7)
+    tgtLine.z0 = input.getNumber(8)
+    tgtLine.a = input.getNumber(9)
+    tgtLine.b = input.getNumber(10)
+    tgtLine.c = input.getNumber(11)
+    tgtLine.tilt = input.getNumber(12)
+    tgtLine.compass = input.getNumber(13)
 
-    linearDeviation = calculateDeviation(myPos, tgtLine)
-    angularDeviation = calculateAngularDeviation(myPos, tgtLine)
-    
+    if enable then
+        linearDeviation = calculateDeviation(myPos, tgtLine)
+        angularDeviation = calculateAngularDeviation(myPos, tgtLine)
+    else
+        linearDeviation = {
+            x = 0,
+            y = 0
+        }
+        angularDeviation = {
+            tilt = 0,
+            compass = 0
+        }
+    end
+
     output.setNumber(1, linearDeviation.x)
     output.setNumber(2, linearDeviation.y)
     output.setNumber(3, angularDeviation.tilt)

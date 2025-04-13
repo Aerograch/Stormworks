@@ -46,63 +46,12 @@ end
 -- the "LifeBoatAPI" is included by default in /_build/libs/ - you can use require("LifeBoatAPI") to get this, and use all the LifeBoatAPI.<functions>!
 
 ticks = 0
-field = 8
-r = 30
-size = 96
-left = 0
-up = 0
-ud = 0
-
-function drawSemiCircleF(x, y, r, k, h, f, c)
-    -- x, y, r задают окружность
-    -- k, h задают прямую 
-    -- f = {-1, 1} задаёт, какую чатсь окружности брать. 1 - верхнюю, -1 - нижнюю
-    -- При k > 1000 -1 - левая, 1 - правая
-    -- c - цвет. g - ground, s - sky
-    -- 204 102 0
-    -- 0 255 255
-    if c == 's' then
-        screen.setColor(0, 255, 255)
-    else
-        screen.setColor(204, 102, 0)
-    end
-    for i = x - r, x + r, 1 do
-        for j = y - r, y + r, 1 do
-            if (((i - x) ^ 2 + (j - y) ^ 2) <= r^2) and ((f * (j + k*(i - x) - y + h)) < 0) then
-                screen.drawCircle(i, j, 1)
-            end
-        end
-    end
-end
-
-function sgn(x)
-    if x > 0 then 
-        return 1
-    else 
-        return -1
-    end
-end
-
 function onTick()
     ticks = ticks + 1
-    left = -input.getNumber(12)
-    up = -input.getNumber(13)
-    ud = input.getNumber(14)
 end
 
 function onDraw()
-    screen.setColor(255, 255, 255)
-    screen.drawCircleF(size/2, field+r, r)
-
-    drawSemiCircleF(size/2, field+r, r, math.tan(2*math.pi*left), up*4*r/math.cos(2*math.pi*left)*sgn(ud), sgn(ud), 's')
-    drawSemiCircleF(size/2, field+r, r, math.tan(2*math.pi*left), up*4*r/math.cos(2*math.pi*left)*sgn(ud), -sgn(ud), 'g')
-
-    screen.setColor(0, 0, 0)
-    screen.drawRectF(0, 8, 28, 60)
-    screen.drawRectF(68, 8, 28, 60)
-    screen.drawLine(size/2, 38, size/2 + 1, 38 + 1)
-
-
+    screen.drawCircle(16,16,5)
 end
 
 

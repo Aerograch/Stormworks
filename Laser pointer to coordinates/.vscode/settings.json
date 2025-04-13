@@ -1,0 +1,61 @@
+{
+    "lifeboatapi.stormworks.isMicrocontrollerProject": true,
+    "lifeboatapi.stormworks.isAddonProject": false,
+    "Lua.diagnostics.disable": [
+        "lowercase-global",
+        "undefined-doc-name"
+    ],
+    "Lua.diagnostics.globals": [
+        "__simulator",
+        "print",
+        "simulator"
+    ],
+    "Lua.runtime.version": "Lua 5.3",
+    "Lua.runtime.builtin": {
+        "coroutine": "enable",
+        "bit32": "enable",
+        "bit": "enable",
+        "builtin": "enable",
+        "utf8": "enable",
+        "package": "enable",
+        "os": "enable",
+        "jit": "enable",
+        "io": "enable",
+        "ffi": "enable",
+        "debug": "enable",
+        "basic": "enable"
+    },
+    "Lua.workspace.ignoreDir": [
+        ".vscode",
+        "/_build/",
+        "!/_build/libs/",
+        "!/_build/_buildactions.lua"
+    ],
+    "Lua.runtime.path": [
+        "?.lua",
+        "?/init.lua"
+    ],
+    "Lua.runtime.pathStrict": true,
+    "Lua.workspace.library": [
+        "e:/Stormworks/Laser pointer to coordinates/",
+        "c:/Users/Иван/.vscode/extensions/nameouschangey.lifeboatapi-0.0.33/assets/lua/Common/",
+        "c:/Users/Иван/.vscode/extensions/nameouschangey.lifeboatapi-0.0.33/assets/lua/Microcontroller/",
+        "E:/Stormworks/",
+        "e:/Stormworks/Laser pointer to coordinates/_build/libs/"
+    ],
+    "lifeboatapi.stormworks.libs.gitLibraries": [
+        {
+            "name": "LifeBoatAPI",
+            "gitUrl": "https://github.com/nameouschangey/Stormworks_LifeBoatAPI_MC.git"
+        }
+    ],
+    "lifeboatapi.stormworks.minimizer.forceBoilerplate": true,
+    "lifeboatapi.stormworks.minimizer.reduceAllWhitespace": true,
+    "lifeboatapi.stormworks.minimizer.reduceNewlines": true,
+    "lifeboatapi.stormworks.minimizer.removeComments": true,
+    "lifeboatapi.stormworks.minimizer.removeRedundancies": true,
+    "lifeboatapi.stormworks.minimizer.shortenGlobals": true,
+    "lifeboatapi.stormworks.minimizer.shortenNumbers": true,
+    "lifeboatapi.stormworks.minimizer.shortenStringDuplicates": true,
+    "lifeboatapi.stormworks.minimizer.shortenVariables": true
+}
