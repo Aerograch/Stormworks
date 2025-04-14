@@ -13,7 +13,7 @@ function vector(x,y,z)return{
 magnitude=function (a)local m=a[1]^2+a[2]^2+a[3]^2 return m==1 and 1 or math.sqrt(m)end,
 ---Returns the dot product a • b
 ---@param a table
----@param b table
+---@param b any
 ---@return table
 dot=function (a,b)return type(b)=="table" and a[1]*b[1]+a[2]*b[2]+a[3]*b[3]or vector(a[1]*b,a[2]*b,a[3]*b)end,
 ---Returns the cross product a ⨉ b
@@ -86,7 +86,21 @@ end,
 ---@return table
 polarToCartesian = function (a)
 	return vector(a[3] * math.sin(a[2]) * math.cos(a[1]), a[3] * math.cos(a[2]), a[3] * math.sin(a[2]) * math.sin(a[1]))
-end
+end,
+---Applies function to all components
+---@param a table
+---@param func function
+---@return table
+apply = function (a, func)
+	return vector(func(a[1]), func(a[2]), func(a[3]))
+end,
+---Same as apply, but provides index and self to func instead of values
+---@param a any
+---@param func any
+---@return table
+applyIndex = function (a, func)
+	return vector(func(a, 1), func(a, 2), func(a, 3))
+end,
 }end
 
 -- Basis:
