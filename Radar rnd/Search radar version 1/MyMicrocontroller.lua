@@ -49,50 +49,67 @@ require("Math.Vectors")
 require("Math.Basics")
 require("Math.Filters")
 require("Types.List")
+require("Types.Stack")
 
 
 function Track(position)
     return {
     position = position,
-    assignOrCreate = function (me, targets, counter)
+    assignOrCreate = function (me, targets, counter, pos)
         possibleTargets = {}
         for i = 1, #targets.list do
             difference = abs(me.position:magnitude() - targets.list[i].position:magnitude())
-            if difference < targets.list[i].velocity:magnitude() * 2 * (counter-targets.list[i].lastUpdated) and not targets.list[i].lastUpdated == counter then
+            if difference < targets.list[i].velocity:magnitude() * 4 * (counter-targets.list[i].lastUpdated+1) then
                 possibleTargets[#possibleTargets+1] = i
-            elseif targets.list[i].filter.k < targets.list[i].filter.k_max and difference < 17 * (counter-targets.list[i].lastUpdated) and not targets.list[i].lastUpdated == counter then
+            elseif targets.list[i].filter.k < targets.list[i].filter.k_max and difference < 17 * (counter-targets.list[i].lastUpdated+1) * pos:magnitude()/10 then
                 possibleTargets[#possibleTargets+1] = i
             end
         end
         min = 999999999
         id = 0
         for i = 1, #possibleTargets do
-            difference = me.position:magnitude() - targets.list[possibleTargets[i]].position:add(targets.list[possibleTargets[i]].velocity:dot(counter-targets.list[i].lastUpdated))
+            if targets.list[possibleTargets[i]].filter.k < targets.list[possibleTargets[i]].filter.k_max then
+                difference = me.position:subtract(targets.list[possibleTargets[i]].position):magnitude()
+            else
+                difference = me.position:subtract(targets.list[possibleTargets[i]].position:add(targets.list[possibleTargets[i]].velocity:dot(counter-targets.list[i].lastUpdated+1))):magnitude()
+            end
             if difference < min then
                 min = difference
                 id = possibleTargets[i]
             end
         end
         if id ~= 0 then
-            targets[id]:update(me.position, counter)
+            targets.list[id]:update(me.position, counter)
         else
             targets:add(Target(me, counter))
-        end
+        end    
+        return {
+            difference = abs(me.position:magnitude() - targets.list[1].position:magnitude()),
+            condition1 = targets.list[1].velocity:magnitude(),
+            condition2 = possibleTargets[1] ~= nil and me.position:subtract(targets.list[possibleTargets[1]].position:add(targets.list[possibleTargets[1]].velocity:dot(counter-targets.list[1].lastUpdated+1))):magnitude() or -69,
+            condition3 = 17 * (counter-targets.list[1].lastUpdated+1) * pos:magnitude()/10 or -69,
+        }
     end
     }
 end
 
 function Target(track, counter)
     return{
+    positionStack = Stack(),
     position = track.position,
     velocity = vector(0,0,0),
-    filter = ABVectorFilter(30),
+    filter = ABVectorFilter(100),
     lastUpdated = counter,
     lifeTime = 0,
     update = function (me, newPos, counter)
         newPos = me.filter:step(newPos, counter-me.lastUpdated)
-        me.velocity = newPos:subtract(me.position)/(counter-me.lastUpdated)
+        me.positionStack:add({newPos, counter})
+        if me.positionStack:count() > 40 then
+            me.positionStack:remove()
+        end
+        me.velocity = newPos:subtract(me.positionStack.values[1][1]):dot(1/(counter-me.positionStack.values[1][2]) ~= 0/0 and 1 or 1/(counter-me.positionStack.values[1][2]))
         me.lastUpdated = counter
+        me.position = newPos
         me.lifeTime = 0
     end,
     tick = function (me)
@@ -104,12 +121,15 @@ end
 gps = vector()
 targets = List({})
 counter = 0
+tracks = {}
 zoom = 1
+debug = {}
 function onTick()
+    debug = {}
     counter = counter + 1
     tracks = {}
     gps = vector(input.getNumber(4), input.getNumber(8), input.getNumber(12))
-    vehicleBasis = vector(input.getNumber(16), input.getNumber(20), input.getNumber(24))
+    vehicleBasis = ijkb(input.getNumber(16), input.getNumber(20), input.getNumber(24))
     zoom = input.getNumber(28)
     i = 1
     while input.getBool(i) do
@@ -117,19 +137,21 @@ function onTick()
         temp = ijkb(target[2]*pi*2, target[3]*pi*2, 0, "aer")[3]
         localTarget = temp:dot(target[1])
         globalTarget = localTarget:localToGlobal(vehicleBasis)
-        tracks[#tracks+1] = Track(globalTarget)
-
+        globalTarget = globalTarget:add(gps)
+        if not globalTarget:isNAN() then
+            tracks[#tracks+1] = Track(globalTarget)
+        end
         i = i + 1
     end
 
     for i = 1, #tracks do
-        tracks[i]:assignOrCreate(targets, counter)
+        debug[1] = tracks[i]:assignOrCreate(targets, counter, gps)
     end
 
     deletionIds = {}
     for i = 1, #targets.list do
         targets.list[i]:tick()
-        if targets.list.lifeTime > 600 then
+        if targets.list[i].lifeTime > 600 then
             deletionIds[#deletionIds+1] = i
         end
     end
@@ -139,13 +161,24 @@ function onTick()
 end
 
 function onDraw()
+    screen.setColor(255,255,255)
     screen.drawMap(gps[1], gps[3], zoom)
+    if targets.list[1] ~= nil then
+        screen.drawText(5, 5, targets.list[1].position[1])
+        screen.drawText(5, 15, targets.list[1].position[3])
+        screen.drawText(5, 25, counter-targets.list[1].lastUpdated)
+        screen.drawText(5, 35, debug[1] ~= nil and debug[1].difference or -69)
+        screen.drawText(5, 45, debug[1] ~= nil and debug[1].condition1 or -69)
+        screen.drawText(5, 55, debug[1] ~= nil and debug[1].condition2 or -69)
+        screen.drawText(5, 65, debug[1] ~= nil and debug[1].condition3 or -69)
+    end
     screen.setColor(200,0,0)
+    
     for i = 1, #targets.list do
-        tgtX, tgtY = map.mapToScreen(gps[1], gps[3], zoom, screen.getWidth(), screen.getHeight(), targets.list[i][1], targets.list[i][2])
-        screen.drawCircleF(tgtX, tgtY, 2)
-        predictedCords = targets.list[i].position:add(targets.list[i].velocity:dot(60))
-        predX, predY = map.mapToScreen(gps[1], gps[3], zoom, screen.getWidth(), screen.getHeight(), predictedCords[1], predictedCords[2])
+        tgtX, tgtY = map.mapToScreen(gps[1], gps[3], zoom, screen.getWidth(), screen.getHeight(), targets.list[i].position[1], targets.list[i].position[3])
+        screen.drawCircleF(tgtX, tgtY, 1.5)
+        predictedCords = targets.list[i].position:add(targets.list[i].velocity:dot(30))
+        predX, predY = map.mapToScreen(gps[1], gps[3], zoom, screen.getWidth(), screen.getHeight(), predictedCords[1], predictedCords[3])
         screen.drawLine(tgtX, tgtY, predX, predY)
     end
 end

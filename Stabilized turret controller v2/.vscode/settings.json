@@ -37,11 +37,11 @@
     ],
     "Lua.runtime.pathStrict": true,
     "Lua.workspace.library": [
-        "e:/Stormworks/Ballistics calculator/",
+        "e:/Stormworks/Stabilized turret controller v2/",
         "c:/Users/Иван/.vscode/extensions/nameouschangey.lifeboatapi-0.0.33/assets/lua/Common/",
         "c:/Users/Иван/.vscode/extensions/nameouschangey.lifeboatapi-0.0.33/assets/lua/Microcontroller/",
         "E:/Stormworks/",
-        "e:/Stormworks/Ballistics calculator/_build/libs/"
+        "e:/Stormworks/Stabilized turret controller v2/_build/libs/"
     ],
     "lifeboatapi.stormworks.libs.gitLibraries": [
         {

@@ -37,11 +37,11 @@
     ],
     "Lua.runtime.pathStrict": true,
     "Lua.workspace.library": [
-        "e:/Stormworks/Ballistics calculator/",
+        "e:/Stormworks/Tests/Physics sensor tests/",
         "c:/Users/Иван/.vscode/extensions/nameouschangey.lifeboatapi-0.0.33/assets/lua/Common/",
         "c:/Users/Иван/.vscode/extensions/nameouschangey.lifeboatapi-0.0.33/assets/lua/Microcontroller/",
         "E:/Stormworks/",
-        "e:/Stormworks/Ballistics calculator/_build/libs/"
+        "e:/Stormworks/Tests/Physics sensor tests/_build/libs/"
     ],
     "lifeboatapi.stormworks.libs.gitLibraries": [
         {

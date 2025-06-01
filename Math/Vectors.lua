@@ -101,6 +101,10 @@ end,
 applyIndex = function (a, func)
 	return vector(func(a, 1), func(a, 2), func(a, 3))
 end,
+
+isNAN = function (me)
+	return me[1] ~= me[1] or me[2] ~= me[2] or me[3] ~= me[3]
+end,
 }end
 
 -- Basis:
@@ -151,4 +155,9 @@ function getVector(si)
 		end
 	end
 	return vector(table.unpack(t))
+end
+
+---Gets vector from 3 channels
+function inputVector(channels, input)
+	return vector(input.getNumber(channels[1]), input.getNumber(channels[2]), input.getNumber(channels[3]))
 end

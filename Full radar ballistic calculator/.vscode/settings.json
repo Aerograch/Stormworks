@@ -37,16 +37,17 @@
     ],
     "Lua.runtime.pathStrict": true,
     "Lua.workspace.library": [
-        "e:/Stormworks/Ballistics calculator/",
+        "e:/Stormworks/Full radar ballistic calculator/",
         "c:/Users/Иван/.vscode/extensions/nameouschangey.lifeboatapi-0.0.33/assets/lua/Common/",
         "c:/Users/Иван/.vscode/extensions/nameouschangey.lifeboatapi-0.0.33/assets/lua/Microcontroller/",
         "E:/Stormworks/",
-        "e:/Stormworks/Ballistics calculator/_build/libs/"
+        "e:/Stormworks/Full radar ballistic calculator/_build/libs/"
     ],
     "lifeboatapi.stormworks.libs.gitLibraries": [
         {
             "name": "LifeBoatAPI",
             "gitUrl": "https://github.com/nameouschangey/Stormworks_LifeBoatAPI_MC.git"
         }
-    ]
+    ],
+    "lifeboatapi.stormworks.minimizer.reduceAllWhitespace": false
 }

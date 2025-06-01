@@ -1,7 +1,7 @@
 function List(values)
     return
     {
-        list = values,
+        list = values or {},
         remove = function (me, index)
             report = {}
             for i = 1, index - 1 do

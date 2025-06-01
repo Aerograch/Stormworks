@@ -48,5 +48,9 @@
             "name": "LifeBoatAPI",
             "gitUrl": "https://github.com/nameouschangey/Stormworks_LifeBoatAPI_MC.git"
         }
-    ]
+    ],
+    "lifeboatapi.stormworks.minimizer.forceBoilerplate": false,
+    "lifeboatapi.stormworks.minimizer.forceNCBoilerplate": false,
+    "lifeboatapi.stormworks.minimizer.reduceNewlines": true,
+    "lifeboatapi.stormworks.minimizer.reduceAllWhitespace": true
 }
