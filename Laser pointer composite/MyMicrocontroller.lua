@@ -47,7 +47,6 @@ end
 
 require("Math.Vectors")
 require("Math.Basics")
-require("Math.PIDs")
 
 --- channels:
 --- numbers
@@ -60,11 +59,6 @@ require("Math.PIDs")
 --- 7 - targetX (in world coordinates)
 --- 8 - targetY (in world coordinates)
 --- 9 - targetZ (in world coordinates)
---- 10 - desirableAzimuthDeviation
---- 11 - desirableElevationDeviation
---- 
---- bools
---- 1 - outerTargetMode
 
 target = vector()
 function onTick()
