@@ -75,17 +75,25 @@ end,
 dsimp=function (a,fact)
 return a[1]/a[3]*fact,-a[2]/a[3]*fact
 end,
----Converts cartesian coordinates to polar
+---Converts cartesian coordinates to polar. Invert x and z before and after!
 ---@param a table
 ---@return table
 cartesianToPolar = function (a)
-	return vector(math.acos(a[1]/ math.sqrt(a[1]*a[1] + a[2]*a[2]))*(x/math.abs(x)), math.acos(a[3] / math.sqrt(a[1]*a[1] + a[2]*a[2] + a[3]*a[3])), math.sqrt(a[1]*a[1] + a[2]*a[2] + a[3]*a[3]))
+	return vector(
+		math.atan(a[1], -a[3]), ---azimuth
+		math.atan(a[2], math.sqrt(a[1]^2 + a[3]^2)), ---elevation
+		math.sqrt(a[1]*a[1] + a[2]*a[2] + a[3]*a[3]) ---distance
+	)
 end,
----Converts polar coordinates to cartesian
+---Converts polar coordinates to cartesian. Invert x and z before and after!
 ---@param a table
 ---@return table
 polarToCartesian = function (a)
-	return vector(a[3] * math.sin(a[2]) * math.cos(a[1]), a[3] * math.cos(a[2]), a[3] * math.sin(a[2]) * math.sin(a[1]))
+	return vector(
+		a[3]*math.cos(a[2])*math.sin(a[1]),
+		a[3]*math.sin(a[2]),
+		-a[3]*math.cos(a[2])*math.cos(a[1])
+	)
 end,
 ---Applies function to all components
 ---@param a table

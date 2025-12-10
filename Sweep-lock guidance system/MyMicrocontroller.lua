@@ -140,13 +140,16 @@ function onTick()
     adjustedCords = pos:subtract(targetCords)
     localCords = adjustedCords:globalToLocal(vehicleBasis)
     targetingCords = localCords:normalize()
+    vehicleVelocity = vector(input.getNumber(20), input.getNumber(21), input.getNumber(22)):normalize()
+    verticalDeviation = acos(vector(targetingCords[2], targetingCords[3]):dot(vector(vehicleVelocity[2], vehicleVelocity[3])) / (vector(targetingCords[2], targetingCords[3]):magnitude()*vector(vehicleVelocity[2], vehicleVelocity[3]):magnitude()))
+    horizontalDeviation = acos(vector(targetingCords[1], targetingCords[3]):dot(vector(vehicleVelocity[1], vehicleVelocity[3])) / (vector(targetingCords[1], targetingCords[3]):magnitude()*vector(vehicleVelocity[1], vehicleVelocity[3]):magnitude()))
     
     if targetingCords[3] > 0 then
         targetingCords[1] = targetingCords[1] + 1*sgn(targetingCords[1])
     end
     --targetCords:cartesianToPolar()
-    output.setNumber(1, targetingCords[1] ~= targetingCords[1] and 0 or targetingCords[1])
-    output.setNumber(2, cords[2] ~= cords[2] and 0 or cords[2])
+    output.setNumber(1, horizontalDeviation ~= horizontalDeviation and 0 or horizontalDeviation)
+    output.setNumber(2, verticalDeviation ~= verticalDeviation and 0 or verticalDeviation)
     output.setNumber(3, targetingCords[3] ~= targetingCords[3] and 0 or targetingCords[3])
     output.setNumber(4, cords[1])
     output.setNumber(5, cords[2])

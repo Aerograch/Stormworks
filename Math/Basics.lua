@@ -7,6 +7,7 @@ asin = math.asin
 atan = math.atan
 tan = math.tan
 abs = math.abs
+sqrt = math.sqrt
 ---Returns +1 when the input is greater or equal to 0, and returns -1 when it's less than 0.
 ---@param x number
 ---@return number
