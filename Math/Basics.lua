@@ -41,3 +41,75 @@ end
 function norm2(x)
 	return (x-pi)%pi2-pi
 end
+
+---@section RollingAverage
+---Initialises RollingAverage
+---@param maxValuesAmount number
+---@return table
+function RollingAverage(maxValuesAmount)
+	return {
+		values = {},
+		max = maxValuesAmount,
+		index = 0,
+		---Adds value to average and returns current average
+		---@param self table
+		---@param value number
+		---@return number
+		addValue = function (self, value)
+			self.index = (self.index % self.max) + 1
+			self.values[self.index] = value
+			local sum = 0
+			for i = 1, #self.values, 1 do
+				sum = sum + self.values[i]
+			end
+			return sum / #self.values
+		end
+	}
+end
+---@endsection
+require("Math.Vectors")
+---@section RollingVectorAverage
+---Initialises RollingVectorAverage
+---@param maxValuesAmount number
+---@return table
+function RollingVectorAverage(maxValuesAmount)
+	return {
+		xValues = {},
+		yValues = {},
+		zValues = {},
+		max = maxValuesAmount,
+		index = 0,
+		---Adds vector to average and returns current average vector
+		---@param self table
+		---@param vector table
+		---@return table
+		addValue = function (self, vector)
+			self.index = (self.index % self.max) + 1
+			self.xValues[self.index] = vector[1]
+			self.yValues[self.index] = vector[2]
+			self.zValues[self.index] = vector[3]
+
+			local sumX = 0
+			for i = 1, #self.xValues, 1 do
+				sumX = sumX + self.xValues[i]
+			end
+
+			local sumY = 0
+			for i = 1, #self.yValues, 1 do
+				sumY = sumY + self.yValues[i]
+			end
+
+			local sumZ = 0
+			for i = 1, #self.zValues, 1 do
+				sumZ = sumZ + self.zValues[i]
+			end
+
+			return vector(
+				sumX / #self.xValues,
+				sumY / #self.yValues,
+				sumZ / #self.zValues
+			)
+		end
+	}
+end
+---@endsection

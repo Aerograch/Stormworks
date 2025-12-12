@@ -47,6 +47,8 @@ end
 
 require("Math.Vectors")
 require("Math.Basics")
+require("Math.Filters")
+require("LifeBoatAPI")
 
 --- channels:
 --- numbers
@@ -59,34 +61,91 @@ require("Math.Basics")
 --- 7 - targetX (in world coordinates)
 --- 8 - targetY (in world coordinates)
 --- 9 - targetZ (in world coordinates)
+--- 10 - radar target distance
+--- 11 - radar target azimuth
+--- 12 - radar target elevation
+--- 
+--- bools
+--- 1 - lock target
+--- 2 - radar found target
+
+posBuffer = {}
+secondAgoTargetPos = vector()
+aligned = false
+velocity = vector()
+
+radarDataAvg = RollingVectorAverage(60)
+velocityDataAvg = RollingVectorAverage(5)
 
 target = vector()
 function onTick()
-    euler = vector(input.getNumber(4), input.getNumber(5), input.getNumber(6))
-    turretBasis = ijkb(euler[1], euler[2], euler[3])
-    pos = vector(input.getNumber(1), input.getNumber(2), input.getNumber(3))
+    lockTarget = input.getBool(1)
+    foundRadarTarget = input.getBool(2)
+    aligned = lockTarget and aligned or false
+    azimuth = 0;
+    elevation = 0;
 
-    target = vector(input.getNumber(7), input.getNumber(8), input.getNumber(9)):subtract(pos)
-    target = vector(-target[1], target[2], -target[3])
+    if lockTarget then
+        euler = vector(input.getNumber(4), input.getNumber(5), input.getNumber(6))
+        turretBasis = ijkb(euler[1], euler[2], euler[3])
+        pos = vector(input.getNumber(1), input.getNumber(2), input.getNumber(3))
+        if aligned and foundRadarTarget then
+            
+            radarData = radarDataAvg:addValue(
+                vector(input.getNumber(10), input.getNumber(11), input.getNumber(12))
+            )
+            basisData = ijkb(radarData[2]*pi2, radarData[3]*pi2, 0, "aer")[3]
+            localTarget = basisData:dot(radarData[1])
+            globalTarget = localTarget:localToGlobal(turretBasis)
+            target = globalTarget:add(pos)
+            if #posBuffer == 0 then
+                posBuffer[1] = target
+            else
+                for i = #posBuffer < 60 and #posBuffer + 1 or #posBuffer, 2, -1 do
+                    posBuffer[i] = posBuffer[i-1]
+                end
+                posBuffer[1] = target
+            end
 
-    local targetAsPolar = target:globalToLocal(turretBasis):cartesianToPolar()
+            if #posBuffer == 60 then
+                velocity = velocityDataAvg:addValue(
+                    posBuffer[1]:subtract(posBuffer[#posBuffer]):dot(1/#posBuffer):dot(60)
+                )
+            end
 
-    azimuthLaser = -targetAsPolar[1] / pi2 * 8
-    elevationLaser = targetAsPolar[2] / pi2 * 8
+            target = target:add(velocity:dot(0.5))
+            output.setNumber(32, #posBuffer)
+        else
+            target = vector(input.getNumber(7), input.getNumber(8), input.getNumber(9))
+            velocity = vector()
+        end
+        localTarget = target:subtract(pos)
+        localTarget = vector(-localTarget[1], localTarget[2], -localTarget[3])
+        targetAsPolar = localTarget:globalToLocal(turretBasis):cartesianToPolar()
+        azimuth = -targetAsPolar[1] / pi2
+        elevation = targetAsPolar[2] / pi2
+        aligned = true
+    else
+        posBuffer = {}
+        aligned = false
+        radarDataAvg = RollingVectorAverage(60)
+    end
 
-    azimuthRadar = -targetAsPolar[1] / pi2
-    elevationRadar = targetAsPolar[2] / pi2
+    output.setNumber(1, azimuth ~= azimuth and 0 or azimuth)
+    output.setNumber(2, elevation ~= elevation and 0 or elevation)
 
-    output.setNumber(1, azimuthLaser ~= azimuthLaser and 0 or azimuthLaser)
-    output.setNumber(2, elevationLaser ~= elevationLaser and 0 or elevationLaser)
-    output.setNumber(3, azimuthRadar ~= azimuthRadar and 0 or azimuthRadar)
-    output.setNumber(4, elevationRadar ~= elevationRadar and 0 or elevationRadar)
-    
+    output.setNumber(3, target[1])
+    output.setNumber(4, target[2])
+    output.setNumber(5, target[3])
 
+    output.setNumber(6, velocity[1])
+    output.setNumber(7, velocity[2])
+    output.setNumber(8, velocity[3])
 end
 
 function onDraw()
     
 end
+
 
 

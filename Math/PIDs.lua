@@ -1,3 +1,4 @@
+---@section PID
 ---Initializes simple pid
 ---@param Kp number
 ---@param Kd number
@@ -22,7 +23,9 @@ function PID(Kp, Kd, Ki)
         end
     }
 end
+---@endsection
 
+---@section IntegralBoundPID
 ---Initializes pid with bound integral
 ---@param Kp number
 ---@param Kd number
@@ -49,4 +52,4 @@ function IntegralBoundPID(Kp, Kd, Ki, limit)
         end
     }
 end
-
+---@endsection

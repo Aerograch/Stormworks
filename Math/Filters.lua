@@ -1,3 +1,4 @@
+---@section ABFilter
 ---Creates A-B Kalman filter instance
 ---@param k_max number
 ---@return table
@@ -37,7 +38,9 @@ function ABFilter(k_max)
         end
     }
 end
+---@endsection
 
+---@section ABVectorFilter
 function ABVectorFilter(k_max)
     return {
         k_max=k_max,
@@ -75,3 +78,4 @@ function ABVectorFilter(k_max)
         end
     }
 end
+---@endsection
