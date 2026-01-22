@@ -75,7 +75,7 @@ aligned = false
 velocity = vector()
 
 radarDataAvg = RollingVectorAverage(60)
-velocityDataAvg = RollingVectorAverage(5)
+velocityDataAvg = RollingVectorAverage(15)
 
 target = vector()
 function onTick()

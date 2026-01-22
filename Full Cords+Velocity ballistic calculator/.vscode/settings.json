@@ -37,11 +37,11 @@
     ],
     "Lua.runtime.pathStrict": true,
     "Lua.workspace.library": [
-        "e:/Stormworks/Radar rnd/Coordinates based lock radar/",
+        "e:/Stormworks/Full Cords+Velocity ballistic calculator/",
         "c:/Users/Иван/.vscode/extensions/nameouschangey.lifeboatapi-0.0.33/assets/lua/Common/",
         "c:/Users/Иван/.vscode/extensions/nameouschangey.lifeboatapi-0.0.33/assets/lua/Microcontroller/",
         "E:/Stormworks/",
-        "e:/Stormworks/Radar rnd/Coordinates based lock radar/_build/libs/"
+        "e:/Stormworks/Full Cords+Velocity ballistic calculator/_build/libs/"
     ],
     "lifeboatapi.stormworks.libs.gitLibraries": [
         {
@@ -49,11 +49,5 @@
             "gitUrl": "https://github.com/nameouschangey/Stormworks_LifeBoatAPI_MC.git"
         }
     ],
-    "lifeboatapi.stormworks.minimizer.reduceAllWhitespace": true,
-    "lifeboatapi.stormworks.minimizer.reduceNewlines": true,
-    "lifeboatapi.stormworks.minimizer.removeComments": true,
-    "lifeboatapi.stormworks.minimizer.removeRedundancies": true,
-    "lifeboatapi.stormworks.minimizer.forceNCBoilerplate": false,
-    "lifeboatapi.stormworks.minimizer.shortenGlobals": true,
-    "lifeboatapi.stormworks.minimizer.shortenVariables": true
+    "lifeboatapi.stormworks.minimizer.reduceAllWhitespace": false
 }

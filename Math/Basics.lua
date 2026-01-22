@@ -8,6 +8,7 @@ atan = math.atan
 tan = math.tan
 abs = math.abs
 sqrt = math.sqrt
+ln = math.log
 ---Returns +1 when the input is greater or equal to 0, and returns -1 when it's less than 0.
 ---@param x number
 ---@return number
@@ -67,8 +68,39 @@ function RollingAverage(maxValuesAmount)
 	}
 end
 ---@endsection
-require("Math.Vectors")
+
+---@section binarySearch
+---Performs binary search up to |result - tgtPoint| < tgtDelta
+---@param min number
+---@param max number
+---@param check function
+---@param tgtDelta number
+---@param tgtPoint number
+---@param checkFunctionStaticArguments table
+---@return number
+function binarySearch(min, max, check, tgtDelta, tgtPoint, checkFunctionStaticArguments)
+    delta = 0
+    iterationsLeft = 50
+	checkFunctionStaticArguments = checkFunctionStaticArguments or {}
+    repeat
+        mid = (max+min) / 2
+        result = check(mid, checkFunctionStaticArguments)
+        delta = math.abs(result-tgtPoint)
+        if result-tgtPoint < 0 then
+            min = mid
+        else
+            max = mid
+        end
+        iterationsLeft = iterationsLeft - 1
+        if iterationsLeft == 0 then break end
+    until delta < tgtDelta
+    return mid
+end
+---@endsection
+
 ---@section RollingVectorAverage
+require("Math.Vectors")
+
 ---Initialises RollingVectorAverage
 ---@param maxValuesAmount number
 ---@return table
@@ -81,13 +113,13 @@ function RollingVectorAverage(maxValuesAmount)
 		index = 0,
 		---Adds vector to average and returns current average vector
 		---@param self table
-		---@param vector table
+		---@param vectorValue table
 		---@return table
-		addValue = function (self, vector)
+		addValue = function (self, vectorValue)
 			self.index = (self.index % self.max) + 1
-			self.xValues[self.index] = vector[1]
-			self.yValues[self.index] = vector[2]
-			self.zValues[self.index] = vector[3]
+			self.xValues[self.index] = vectorValue[1]
+			self.yValues[self.index] = vectorValue[2]
+			self.zValues[self.index] = vectorValue[3]
 
 			local sumX = 0
 			for i = 1, #self.xValues, 1 do

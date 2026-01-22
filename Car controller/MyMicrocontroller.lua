@@ -45,70 +45,13 @@ end
 -- try require("Folder.Filename") to include code from another file in this, so you can store code in libraries
 -- the "LifeBoatAPI" is included by default in /_build/libs/ - you can use require("LifeBoatAPI") to get this, and use all the LifeBoatAPI.<functions>!
 
-function binarySearch(min, max, check, tgtDelta, tgtPoint)
-    delta = 0
-    iter = 50
-    repeat
-        mid = (max+min) / 2
-        result = check(mid)
-        delta = math.abs(result-tgtPoint)
-        if result-tgtPoint < 0 then
-            min = mid
-        else
-            max = mid
-        end
-        iter = iter - 1
-        if iter == 0 then break end
-    until delta < tgtDelta
-    return mid
-end
-
-function CalculateHeight(a)
-    y = 1/k*((tan(a)*k+(g/(v*cos(a))))*x + (g/k)*ln(1-x*(k/(v*cos(a)))))
-    return y
-end
-
-cos = math.cos
-sin = math.sin
-tan = math.tan
-ln = math.log
-
-resultAngle = 0
-tgtX = 0
-tgtY = 0
-
-x = 0
-k = 0
-v = 0
-g = 30
-
-dist = 0
-elevation = 0
-
-calc = false
-
+ticks = 0
 function onTick()
-    if input.getBool(1) then
-        dist = input.getNumber(1)
-        elevation = input.getNumber(2) * math.pi * 2
+    ticks = ticks + 1
+end
 
-        tgtX = dist*cos(elevation)
-        tgtY = dist*sin(elevation)
-
-        x = tgtX
-        k = input.getNumber(3)
-        v = input.getNumber(4)
-        calc = true
-    ---else if calc then
-        calc = false
-        resultAngle = binarySearch(0, math.pi/4, CalculateHeight, 0.1, tgtY) / (math.pi * 2)
-    end ---end
-
-    output.setNumber(1, resultAngle)
-    output.setNumber(2, tgtX)
-    output.setNumber(3, tgtY)
-    output.setNumber(4, k)
-    output.setNumber(5, v)
+function onDraw()
+    screen.drawCircle(16,16,5)
 end
 
 
