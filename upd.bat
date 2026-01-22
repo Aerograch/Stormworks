@@ -1,4 +1,5 @@
 @echo off
+chcp 1251
 REM ===== осрэ й бюьелс пеонгхрнпхч =====
 cd /d "E:\Stormworks"
 
