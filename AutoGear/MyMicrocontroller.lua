@@ -45,18 +45,6 @@ end
 -- try require("Folder.Filename") to include code from another file in this, so you can store code in libraries
 -- the "LifeBoatAPI" is included by default in /_build/libs/ - you can use require("LifeBoatAPI") to get this, and use all the LifeBoatAPI.<functions>!
 
-
-Person = {}
-
-function Person:new()
-    local obj = {}
-    setmetatable(obj, self)
-    self.__index = self; return obj
-end
-
-aa = Person:new()
-
-
 grace = 15
 max = 12
 min = 6
@@ -67,7 +55,7 @@ function onTick()
     end
 
     rps = input.getNumber(1)
-    manual = input.getBool(1)
+    manual = input.getBool(1)MyMicrocontroller.lua
     gearUp = input.getBool(2)
     gearDown = input.getBool(3)
 

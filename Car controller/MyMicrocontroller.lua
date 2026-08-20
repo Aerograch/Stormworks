@@ -45,14 +45,119 @@ end
 -- try require("Folder.Filename") to include code from another file in this, so you can store code in libraries
 -- the "LifeBoatAPI" is included by default in /_build/libs/ - you can use require("LifeBoatAPI") to get this, and use all the LifeBoatAPI.<functions>!
 
-ticks = 0
+require("Math.Basics")
+
+---Input
+---Seat:
+---num 1-8 Controll Axis
+---num 9,10 - Look x/y
+---Bool 1-20 - buttons
+---Bool 31 - trigger
+---Bool 32 - occupied
+---Other:
+---num
+---11 - Wheel RPS
+---12 - Engine RPS
+---13 - speed
+---bool
+---21 - Ignition
+---22 - Parking break
+---23 - Manual
+---
+---Output
+---num
+---1 - Clutch
+---2 - Engine throttle
+---3 - Gear
+---4 - Breaks
+---5 - Steering
+---bool
+---1 - Starter
+---2 - Reverse
+---3 - IsGamepad
+---
+
+controller = {
+    throttle = 0,
+    steering = 0,
+    breaking = 0,
+    gamepad = false,
+    gearUp = false,
+    gearDown = false
+}
+
+car = {
+    wheelRPS = 0,
+    engineRPS = 0,
+    speed = 0,
+    gearShiftDelay = 15,
+    gear = 1,
+    manual = false,
+    ignition = false,
+    parkingBreak = false
+}
+
+
+
 function onTick()
-    ticks = ticks + 1
+    controller.gamepad = input.getNumber(property.getNumber("Gamepad switch button"))
+    controller.gearUp = input.getNumber(property.getNumber("Gear up button"))
+    controller.gearDown = input.getNumber(property.getNumber("Dear down button"))
+
+    car.wheelRPS = input.getNumber(11)
+    car.engineRPS = input.getNumber(12)
+    car.speed = input.getNumber(13)
+    car.ignition = input.getBool(21)
+    car.parkingBreak = input.getBool(22) or input.getBool(property.getNumber("Keyboard breaking button(trigger = 31)"))
+    car.manual = input.getBool(23)
+
+    if controller.gamepad then
+        controller.throttle = input.getNumber(property.getNumber("Gamepad Throttle Axis"))
+        controller.throttle = (controller.throttle - 1)/-2
+        controller.breaking = input.getNumber(property.getNumber("Gamepad Breaking Axis"))
+        controller.breaking = (controller.breaking - 1)/-2
+        controller.steering = input.getNumber(property.getNumber("Gamepad Steering Axis"))
+    else
+        controller.throttle = clamp(input.getNumber(property.getNumber("Keyboard Throttle Axis")), 0, 1)
+        controller.breaking = clamp(input.getNumber(property.getNumber("Keyboard Throttle Axis"))*-1, 0, 1)
+        controller.steering = input.getNumber(property.getNumber("Keyboard Steering Axis"))
+    end
+
+    ---Clutch handling
+
+
+
+    ---Automatic gear box
+
+    if car.gearShiftDelay > 0 then
+        car.gearShiftDelay = car.gearShiftDelay - 1
+    end
+
+    if car.manual and car.gearShiftDelay == 0 then
+        if controller.gearUp and car.gear < property.getNumber("Number of gears") then
+            car.gear = car.gear + 1
+                car.gearShiftDelay = 15
+        end
+        if (controller.gearDown or car.engineRPS < 3) and car.gear > 1 then
+            car.gear = car.gear - 1
+                car.gearShiftDelay = 15
+        end
+    else
+        if car.gearShiftDelay == 0 then
+            if car.engineRPS > 12 and car.gear < property.getNumber("Number of gears") then
+                car.gear = car.gear + 1
+                car.gearShiftDelay = 15
+            end
+            if car.engineRPS < 6 and car.gear > 1 then
+                car.gear = car.gear - 1
+                car.gearShiftDelay = 15
+            end
+        end
+    end
+
+    output.setNumber(3, car.gear)
 end
 
-function onDraw()
-    screen.drawCircle(16,16,5)
-end
 
 
 

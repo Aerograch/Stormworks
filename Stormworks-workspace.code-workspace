@@ -1,0 +1,115 @@
+{
+	"folders": [
+		{
+			"name": "Quazibalistic GPS missile",
+			"path": "Gps missiles/Quazibalistic GPS missile"
+		},
+		{
+			"name": "Simple GPS Missile V2",
+			"path": "Gps missiles/Simple GPS Missile V2"
+		},
+		{
+			"name": "Car controller v2",
+			"path": "Car controller v2"
+		},
+		{
+			"name": "Laser pod",
+			"path": "Laser pod"
+		},
+		{
+			"name": "Laser+GPS missile",
+			"path": "Gps missiles/Laser+GPS missile"
+		},
+		{
+			"name": "Test 3",
+			"path": "Tests/Test 3"
+		},
+		{
+			"name": "Simple GPS Missile",
+			"path": "Gps missiles/Simple GPS Missile"
+		},
+		{
+			"path": "4 point container controller"
+		},
+		{
+			"path": "AutoGear"
+		},
+		{
+			"path": "Ballistics calculator"
+		},
+		{
+			"path": "Car controller"
+		},
+		{
+			"path": "Full Cords+Velocity ballistic calculator"
+		},
+		{
+			"path": "Full radar ballistic calculator"
+		},
+		{
+			"path": "Guidance systems tests"
+		},
+		{
+			"path": "Laser pointer composite"
+		},
+		{
+			"path": "Laser pointer to coordinates"
+		},
+		{
+			"path": "MapOffset"
+		},
+		{
+			"path": "Math"
+		},
+		{
+			"path": "MFD"
+		},
+		{
+			"path": "Multiple-unit train control"
+		},
+		{
+			"path": "Radar rnd"
+		},
+		{
+			"path": "SACLOS ATGM"
+		},
+		{
+			"path": "Simple plane autopilot"
+		},
+		{
+			"path": "Sonar proportional guidance"
+		},
+		{
+			"path": "Sphere stabilizer"
+		},
+		{
+			"path": "Stabilized turret controller"
+		},
+		{
+			"path": "Stabilized turret controller v2"
+		},
+		{
+			"path": "Sweep-lock guidance system"
+		},
+		{
+			"path": "Twin trauler buoy plotter"
+		},
+		{
+			"path": "Types"
+		},
+		{
+			"path": "Tests/Physics sensor tests"
+		},
+		{
+			"path": "Tests/Test 1"
+		},
+		{
+			"path": "Tests/Test 2"
+		}
+	],
+	"extensions": {
+		"recommendations": [
+			"nameouschangey.lifeboatapi"
+		]
+	}
+}

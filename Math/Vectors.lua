@@ -111,7 +111,7 @@ end,
 ---@endsection
 
 ---@section cartesianToPolar
----Converts cartesian coordinates to polar. Invert x and z before and after!
+---Converts cartesian coordinates to polar. Invert x and z before and after! ??????? WTF? No you don't? Maybe sometimes?
 ---@param me table
 ---@return table
 cartesianToPolar = function (me)
@@ -123,15 +123,41 @@ cartesianToPolar = function (me)
 end,
 ---@endsection
 
----@section polarToCartesian
----Converts polar coordinates to cartesian. Invert x and z before and after!
+---@section cartesianToPolarInverted
+---Converts cartesian coordinates to polar.
 ---@param me table
 ---@return table
-polarToCartesian = function (me)
+cartesianToPolarInverted = function (me)
+	return vector(
+		math.atan(-me[1], me[3]), ---azimuth
+		math.atan(me[2], math.sqrt((-me[1])^2 + (-me[3])^2)), ---elevation
+		math.sqrt((-me[1])*(-me[1]) + me[2]*me[2] + (-me[3])*(-me[3])) ---distance
+	)
+end,
+---@endsection
+
+---@section polarToCartesian
+---Converts polar coordinates to cartesian. Invert x and z before and after! ??????? WTF? No you don't? Maybe sometimes?
+---@param me table
+---@return table
+polarToCartesian = function (me) 
 	return vector(
 		me[3]*math.cos(me[2])*math.sin(me[1]),
 		me[3]*math.sin(me[2]),
 		-me[3]*math.cos(me[2])*math.cos(me[1])
+	)
+end,
+---@endsection
+
+---@section polarToCartesianInverted
+---Converts polar coordinates to cartesian.
+---@param me table
+---@return table
+polarToCartesianInverted = function (me) 
+	return vector(
+		-(me[3]*math.cos(me[2])*math.sin(me[1])),
+		me[3]*math.sin(me[2]),
+		-(-me[3]*math.cos(me[2])*math.cos(me[1]))
 	)
 end,
 ---@endsection
