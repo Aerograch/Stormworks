@@ -90,8 +90,16 @@ end
 
 verticalCorrection = property.getNumber("Vertical correction factor")
 
+targetPositionRollingAverage = RollingVectorAverage(60)
+targetVelocityRollingAverage = RollingVectorAverage(60)
 
 timeSinceLaserLock = 0
+
+currentVector = vector()
+lastSecondVector = vector()
+timeToImpact = 0
+velocity = {}
+targetCords = {}
 
 ticks = 0
 function onTick()
@@ -117,15 +125,32 @@ function onTick()
     if timeSinceLaserLock >= 10 then
         targetCords = ijkb(input.getNumber(13)*pi2, input.getNumber(14)*pi2, 0, "aer")[3]:dot(input.getNumber(15)):localToGlobal(missileBasis):add(pos)
         targetCords[2] = targetCords[2] + verticalCorrection
+        targetPositionRollingAverage:addValue(targetCords)
+        if #targetPositionRollingAverage.xValues == 60 then
+            timeToImpact = targetCords:subtract(pos):magnitude()/globalMissileVelocity:magnitude()
+            currentVector = vector(targetPositionRollingAverage.xValues[targetPositionRollingAverage.index],
+                                   targetPositionRollingAverage.yValues[targetPositionRollingAverage.index],
+                                   targetPositionRollingAverage.zValues[targetPositionRollingAverage.index])
+            lastSecondVector = vector(targetPositionRollingAverage.xValues[(targetPositionRollingAverage.index % targetPositionRollingAverage.max) + 1],
+                                      targetPositionRollingAverage.yValues[(targetPositionRollingAverage.index % targetPositionRollingAverage.max) + 1],
+                                      targetPositionRollingAverage.zValues[(targetPositionRollingAverage.index % targetPositionRollingAverage.max) + 1])
+            
+            velocity = targetVelocityRollingAverage:addValue(currentVector:subtract(lastSecondVector))
+
+            if #targetVelocityRollingAverage.xValues == 60 then
+                targetCords = velocity:dot(targetCords:subtract(pos):magnitude()/globalMissileVelocity:magnitude()):add(targetCords)
+            end
+                            
+        end                  
     else
         targetCords = vector(input.getNumber(10), input.getNumber(11), input.getNumber(12))
     end
     adjustedCords = targetCords:subtract(pos)
 
-    directGuidance = adjustedCords:magnitude() < 1000
+    directGuidance = vector(adjustedCords[1], 0, adjustedCords[3]):magnitude() < 1000
 
     if not directGuidance then
-        adjustedCords[2] = adjustedCords[2] + 50
+        adjustedCords[2] = adjustedCords[2] 
     end
 
     globalControl = adjustedCords:normalize():subtract(globalMissileVelocity:normalize())
@@ -144,19 +169,13 @@ function onTick()
 
     output.setNumber(1, control.horizontal.control ~= control.horizontal.control and 0 or control.horizontal.control)
     output.setNumber(2, control.vertical.control ~= control.vertical.control and 0 or control.vertical.control)
-    output.setNumber(3, globalMissileVelocity[1]) 
+    output.setNumber(3, timeToImpact) 
     output.setNumber(4, globalMissileVelocity[2])
     output.setNumber(5, globalMissileVelocity[3])
-    output.setNumber(6, globalControl[1])
-    output.setNumber(7, globalControl[2])
-    output.setNumber(8, globalControl[3])
-    output.setNumber(9, adjustedCords:globalToLocal(missileBasis)[1])
-    output.setNumber(10, adjustedCords:globalToLocal(missileBasis)[2])
-    output.setNumber(11, adjustedCords:globalToLocal(missileBasis)[3])
+    output.setNumber(6, velocity[1])
+    output.setNumber(7, velocity[2])
+    output.setNumber(8, velocity[3])
+    output.setNumber(9, currentVector:subtract(lastSecondVector)[1])
+    output.setNumber(10, currentVector:subtract(lastSecondVector)[2])
+    output.setNumber(11, currentVector:subtract(lastSecondVector)[3])
 end
-
-
-
-
-
-

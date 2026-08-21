@@ -1,8 +1,8 @@
 {
 	"folders": [
 		{
-			"name": "Quazibalistic GPS missile",
-			"path": "Gps missiles/Quazibalistic GPS missile"
+			"name": "Test 4",
+			"path": "Tests/Test 4"
 		},
 		{
 			"name": "Simple GPS Missile V2",
@@ -32,9 +32,6 @@
 			"path": "4 point container controller"
 		},
 		{
-			"path": "AutoGear"
-		},
-		{
 			"path": "Ballistics calculator"
 		},
 		{
@@ -44,67 +41,13 @@
 			"path": "Full Cords+Velocity ballistic calculator"
 		},
 		{
-			"path": "Full radar ballistic calculator"
-		},
-		{
-			"path": "Guidance systems tests"
-		},
-		{
-			"path": "Laser pointer composite"
-		},
-		{
-			"path": "Laser pointer to coordinates"
-		},
-		{
-			"path": "MapOffset"
-		},
-		{
 			"path": "Math"
-		},
-		{
-			"path": "MFD"
-		},
-		{
-			"path": "Multiple-unit train control"
-		},
-		{
-			"path": "Radar rnd"
-		},
-		{
-			"path": "SACLOS ATGM"
-		},
-		{
-			"path": "Simple plane autopilot"
-		},
-		{
-			"path": "Sonar proportional guidance"
-		},
-		{
-			"path": "Sphere stabilizer"
-		},
-		{
-			"path": "Stabilized turret controller"
-		},
-		{
-			"path": "Stabilized turret controller v2"
-		},
-		{
-			"path": "Sweep-lock guidance system"
 		},
 		{
 			"path": "Twin trauler buoy plotter"
 		},
 		{
-			"path": "Types"
-		},
-		{
-			"path": "Tests/Physics sensor tests"
-		},
-		{
-			"path": "Tests/Test 1"
-		},
-		{
-			"path": "Tests/Test 2"
+			"path": "Gps missiles/Lead Pursuit Radar+GPS missile"
 		}
 	],
 	"extensions": {
